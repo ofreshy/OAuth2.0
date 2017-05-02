@@ -5,6 +5,10 @@ from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
 
+from flask import session as login_session
+import string
+import random
+
 
 #Connect to Database and create database session
 engine = create_engine('sqlite:///restaurantmenu.db')
@@ -12,6 +16,15 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+
+@app.route('/login')
+def show_login():
+    chars = string.ascii_uppercase + string.digits
+    rand_chars = [random.choice(chars) for _ in xrange(32)]
+    state = ''.join(rand_chars)
+    login_session['state'] = state
+    return "The Cureent state is {0}".format(login_session['state'])
 
 
 #JSON APIs to view Restaurant Information
